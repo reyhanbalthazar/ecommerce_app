@@ -41,6 +41,14 @@ const RegisterPage = (props) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20 }}>
+            <Icon
+                containerStyle={{ position: "absolute" }}
+                raised
+                name='arrow-left'
+                type='font-awesome'
+                color='#2d3436'
+                size={15}
+                onPress={() => props.navigation.goBack()} />
             <StatusBar backgroundColor={"white"} barStyle='dark-content' />
             <KeyboardAvoidingView behavior="position">
                 <Image source={require('../assets/register_asset.png')}

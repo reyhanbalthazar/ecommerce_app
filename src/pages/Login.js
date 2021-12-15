@@ -1,6 +1,7 @@
+import { StackActions } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StatusBar, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, StatusBar, View } from 'react-native';
 import { Button, Icon, Image, Input, SocialIcon, Text } from 'react-native-elements';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { API_URL } from '../../helper';
@@ -16,6 +17,11 @@ const LoginPage = (props) => {
     const onBtLogin = () => {
         axios.get(`${API_URL}/dataUser?username=${username}&password=${password}`)
             .then((res) => {
+                if(res.data.length > 0 ) {
+                    props.navigation.dispatch(StackActions.replace("TabNav"))
+                } else {
+                    Alert.alert("This account is not exist")
+                }
                 console.log("Login Success", res.data)
             }).catch((error) => {
                 console.log(error)
@@ -34,6 +40,14 @@ const LoginPage = (props) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 20 }}>
+            <Icon
+                containerStyle={{ position: "absolute" }}
+                raised
+                name='arrow-left'
+                type='font-awesome'
+                color='#2d3436'
+                size={15}
+                onPress={() => console.log('hello')} />
             <StatusBar backgroundColor={"white"} barStyle='dark-content' />
             <KeyboardAvoidingView behavior="position">
                 <Image source={require('../assets/login_asset.png')}
@@ -77,7 +91,11 @@ const LoginPage = (props) => {
                 <View style={{ marginTop: hp(2), marginBottom: hp(2) }}>
                     <Text style={{ textAlign: "center" }}>
                         No have account ?
-                        <Text style={{ fontWeight: "bold", color: "#00a8ff" }}>Register</Text>
+                        <Text style={{ fontWeight: "bold", color: "#00a8ff" }}
+                            onPress={()=>props.navigation.navigate("Register")}
+                        >
+                            Register
+                            </Text>
                     </Text>
                 </View>
             </KeyboardAvoidingView>
