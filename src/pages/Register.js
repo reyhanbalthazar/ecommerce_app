@@ -1,11 +1,15 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { View, StatusBar, KeyboardAvoidingView } from 'react-native';
+import { View, StatusBar, KeyboardAvoidingView, Alert } from 'react-native';
 import { Image, Text, Input, Icon, Button } from 'react-native-elements';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { API_URL } from '../../helper';
+import { useDispatch, useSelector } from 'react-redux';
+import { onRegister } from '../actions';
 
 const RegisterPage = (props) => {
+
+    const dispatch = useDispatch();
 
     const [email, setEmail] = useState("")
     const [username, setUsername] = useState("")
@@ -24,19 +28,25 @@ const RegisterPage = (props) => {
         }
     }
 
-    const onBtRegis = () => {
-        axios.post(`${API_URL}/dataUser`, {
-            username: username,
-            email: email,
-            password: password,
-            role:"user",
-            status:"Active",
-            cart:[]
-        }).then((res) => {
-            console.log("register berhasil", res.data)
-        }).catch((err) => {
-            console.log(err)
-        })
+    const onBtRegis = async () => {
+
+        let respon = await dispatch(onRegister(username, email, password))
+        console.log("CEK REGISTER", respon.success)
+        if (respon.success > 0) {
+            Alert.alert(`${username} Register berhasil`)
+        }
+        // axios.post(`${API_URL}/dataUser`, {
+        //     username: username,
+        //     email: email,
+        //     password: password,
+        //     role:"user",
+        //     status:"Active",
+        //     cart:[]
+        // }).then((res) => {
+        //     console.log("register berhasil", res.data)
+        // }).catch((err) => {
+        //     console.log(err)
+        // })
     }
 
     return (

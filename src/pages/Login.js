@@ -1,12 +1,24 @@
-import { StackActions } from '@react-navigation/native';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Alert, KeyboardAvoidingView, StatusBar, View } from 'react-native';
 import { Button, Icon, Image, Input, SocialIcon, Text } from 'react-native-elements';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { API_URL } from '../../helper';
+import { useDispatch, useSelector } from 'react-redux';
+import { onLogin } from '../actions'
+import { StackActions } from '@react-navigation/native';
 
 const LoginPage = (props) => {
+    // useDispatch 
+    const dispatch = useDispatch();
+
+    // useSelector sebagai pengganti mapToProps pada class component
+    const { iduser, usernameReducer } = useSelector((state) => {
+        return {
+            iduser: state.userReducer.id,
+            usernameReducer: state.userReducer.username
+        }
+    })
 
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
@@ -14,25 +26,27 @@ const LoginPage = (props) => {
     const [visible, setVisible] = useState(true)
     const [eye, setEye] = useState("eye-off")
 
-    const onBtLogin = () => {
-        axios.get(`${API_URL}/dataUser?username=${username}&password=${password}`)
-            .then((res) => {
-                if(res.data.length > 0 ) {
-                    props.navigation.dispatch(StackActions.replace("TabNav"))
-                } else {
-                    Alert.alert("This account is not exist")
-                }
-                console.log("Login Success", res.data)
-            }).catch((error) => {
-                console.log(error)
-            })
+
+
+
+
+    const onBtLogin = async () => {
+
+        let respon = await dispatch(onLogin(username, password))
+        console.log("test", respon.success)
+
+        if (respon.success > 0) {
+            props.navigation.dispatch(StackActions.replace("TabNav"))
+        } else {
+            Alert.alert("This account is not exist")
+        }
     }
 
     const onBtVisible = () => {
         if (visible == false) {
             setVisible(true)
             setEye("eye-off")
-        } else if(visible == true) {
+        } else if (visible == true) {
             setVisible(false)
             setEye("eye")
         }
@@ -61,18 +75,18 @@ const LoginPage = (props) => {
                             <Icon name="user" type="feather" color="#bdc3c7" />
                         }
                     />
-                        <Input placeholder="Input Password"
-                            secureTextEntry={visible}
-                            onChangeText={(val) => setPassword(val)}
-                            leftIcon={
-                                <Icon name="lock" type="feather" color="#bdc3c7" />
-                            }
-                            rightIcon={
-                                <Icon name={eye} type="feather" color="#bdc3c7" 
+                    <Input placeholder="Input Password"
+                        secureTextEntry={visible}
+                        onChangeText={(val) => setPassword(val)}
+                        leftIcon={
+                            <Icon name="lock" type="feather" color="#bdc3c7" />
+                        }
+                        rightIcon={
+                            <Icon name={eye} type="feather" color="#bdc3c7"
                                 onPress={onBtVisible}
-                                />
-                            }
-                        />
+                            />
+                        }
+                    />
                 </View>
                 <Button
                     title="Login"
@@ -92,10 +106,10 @@ const LoginPage = (props) => {
                     <Text style={{ textAlign: "center" }}>
                         No have account ?
                         <Text style={{ fontWeight: "bold", color: "#00a8ff" }}
-                            onPress={()=>props.navigation.navigate("Register")}
+                            onPress={() => props.navigation.navigate("Register")}
                         >
                             Register
-                            </Text>
+                        </Text>
                     </Text>
                 </View>
             </KeyboardAvoidingView>
