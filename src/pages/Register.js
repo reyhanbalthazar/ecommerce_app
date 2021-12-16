@@ -6,6 +6,7 @@ import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-nat
 import { API_URL } from '../../helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { onRegister } from '../actions';
+import { StackActions } from '@react-navigation/native';
 
 const RegisterPage = (props) => {
 
@@ -31,9 +32,17 @@ const RegisterPage = (props) => {
     const onBtRegis = async () => {
 
         let respon = await dispatch(onRegister(username, email, password))
-        console.log("CEK REGISTER", respon.success)
-        if (respon.success > 0) {
-            Alert.alert(`${username} Register berhasil`)
+        if (respon.success) {
+            console.log("CEK REGISTER", respon.success)
+            Alert.alert(null, `${username} Register berhasil`,
+                [
+                    {
+                        text: "To Login Page",
+                        onPress: () => props.navigation.dispatch(StackActions.replace("Login"))
+                    }
+                ])
+        } else {
+            Alert.alert("Belom Lengkap")
         }
         // axios.post(`${API_URL}/dataUser`, {
         //     username: username,
@@ -80,7 +89,7 @@ const RegisterPage = (props) => {
                     />
                     <Input placeholder="Input Password"
                         secureTextEntry={visible}
-                        
+
                         leftIcon={
                             <Icon name="lock" type="feather" color="#bdc3c7" />
                         }

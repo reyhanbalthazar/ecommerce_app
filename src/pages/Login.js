@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, StatusBar, View } from 'react-native';
 import { Button, Icon, Image, Input, SocialIcon, Text } from 'react-native-elements';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
@@ -26,9 +26,11 @@ const LoginPage = (props) => {
     const [visible, setVisible] = useState(true)
     const [eye, setEye] = useState("eye-off")
 
-
-
-
+    useEffect(()=>{
+        if(iduser){
+            props.navigation.dispatch(StackActions.replace("TabNav"))
+        }
+    })
 
     const onBtLogin = async () => {
 

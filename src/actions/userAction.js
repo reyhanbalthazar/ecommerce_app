@@ -1,6 +1,6 @@
+import AsyncStorageLib from "@react-native-async-storage/async-storage"
 import axios from "axios"
 import { API_URL } from "../../helper"
-
 
 export const onLogin = (username, password) => {
     return async (dispatch) => {
@@ -12,6 +12,7 @@ export const onLogin = (username, password) => {
                     type: "LOGIN_SUCCESS",
                     payload: res.data[0]
                 })
+                AsyncStorageLib.setItem("dataUser", data)
                 return { success: true }
             }
         } catch (error) {
@@ -20,6 +21,29 @@ export const onLogin = (username, password) => {
     }
 }
 
+export const onKeepLogin = () => {
+    return async (dispatch) => {
+        try {
+            let dataUser = await AsyncStorageLib.getItem("dataUser")
+            dataUser = JSON.parse(dataUser)
+            console.log("Membaca data dari AsyncStorage", dataUser)
+            if (dataUser.id) {
+                let res = await axios.get(`${API_URL}/dataUser?id=${dataUser.id}`)
+                if (res.data.length > 0) {
+                    dispatch({
+                        // MENYIMPAN DATA KE REDUCER
+                        type: "LOGIN_SUCCESS",
+                        payload: res.data[0]
+                    })
+                    AsyncStorageLib.setItem("dataUser", JSON.stringify(res.data[0]))
+                    return { success: true }
+                }
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
 
 export const onRegister = (username, email, password) => {
     return async (dispatch) => {
