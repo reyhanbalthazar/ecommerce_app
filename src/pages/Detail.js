@@ -79,6 +79,7 @@ const DetailProduk = (props) => {
             nama,
             brand,
             harga,
+            totalHarga: harga * parseInt(qty),
             type: activeType.type,
             qty: parseInt(qty)
         })
@@ -142,7 +143,7 @@ const DetailProduk = (props) => {
                 </View>
                 <View style={{ paddingHorizontal: 10, marginTop: 20 }}>
                     <Text style={{ color: "#3c40c6", fontWeight: "800" }}>Choose Type : <Text style={{ color: "gray" }}>{stock.length} type</Text>
-                        <Text style={{ color: "#3c40c6", fontWeight: "800" }}> {qty} stock</Text>
+                        <Text style={{ color: "#3c40c6", fontWeight: "800" }}> {activeType.qty} stock</Text>
                     </Text>
                 </View>
                 <View style={{ flexDirection: "row", marginTop: 16 }}>
