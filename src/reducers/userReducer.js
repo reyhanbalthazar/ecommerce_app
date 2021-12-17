@@ -14,6 +14,8 @@ export const userReducer = (state = INITIAL_STATE, action) => {
             return { ...state, ...action.payload }
         case "REGISTER_SUCCESS":
             return { ...state, ...action.payload }
+        case "UPDATE_CART":
+            return { ...state, cart: action.payload }
         default:
             return state
     }

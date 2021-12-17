@@ -66,3 +66,24 @@ export const onRegister = (username, email, password) => {
         }
     }
 }
+
+export const updateUserCart = (data, iduser) => {
+    return async (dispatch) => {
+        try {
+            let res = await axios.patch(`${API_URL}/dataUser/${iduser}`, {
+                cart: data
+            })
+
+            console.log("res.data dalam updateUserCart", res.data)
+
+            dispatch({
+                type: "UPDATE_CART",
+                payload: res.data.cart
+            })
+
+            return { success: true }
+        } catch (error) {
+            console.type(error)
+        }
+    }
+}

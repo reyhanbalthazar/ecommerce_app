@@ -71,7 +71,7 @@ const CartPage = (props) => {
                             <Icon name="trash" type="feather" color="#bdc3c7" style={{marginLeft:wp(34)}} />
                         </View>
                     </View>
-                        <Text style={{ fontWeight: "800", color: "#30336b", position: 'absolute', right: 0 }}>${value.harga}</Text>
+                        <Text h4 style={{ fontWeight: "800", color: "#30336b", position: 'absolute', right: 0 }}>${value.harga}</Text>
                 </View>
             </View>
         })
@@ -80,7 +80,7 @@ const CartPage = (props) => {
     return (
         <View style={{ flex: 1, backgroundColor: "white", paddingTop: hp(10), paddingHorizontal: wp(5) }}>
             <Text h4 style={{ textAlign: "center" }}>Cart</Text>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View>
                     {printCart()}
                 </View>

@@ -1,36 +1,46 @@
 import React, { useState } from 'react';
-import { FlatList, ScrollView, View } from 'react-native';
+import { Alert, FlatList, ScrollView, View } from 'react-native';
 import { Text, Icon, Image, Button, Overlay } from 'react-native-elements';
 import { Input } from 'react-native-elements/dist/input/Input';
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateUserCart } from '../actions';
 
 const DetailProduk = (props) => {
-
+    const dispatch = useDispatch();
     const { nama, kategori, deskripsi, harga, brand, images, stock } = props.route.params.detail
-    const [activeType, setActiveType] = useState(null)
     const [visible, setVisible] = useState(false);
-    const [qty, setQty] = useState("")
-    
-    console.log(props.route.params)
+    console.log("PROPS ROUTE PARAMS", props.route.params)
+    const [activeType, setActiveType] = useState({})
+    const [qty, setQty] = useState("1")
+
+    // MENGAMBIL DATA CART SEBELUMNYA DARI GLOBAL STORAGE
+    const { cart, iduser } = useSelector((state) => {
+        return {
+            cart: state.userReducer.cart,
+            iduser: state.userReducer.id
+        }
+    })
+
     const printType = () => {
         return stock.map((value, index) => {
-            if (activeType == index) {
+            if (activeType.type == value.type) {
                 return <Button
-                title={value.type}
-                type="clear"
-                containerStyle={{
-                    marginLeft: 10,
-                    backgroundColor: "#00a8ff",
-                    borderRadius: 25,
-                    paddingHorizontal: 25
+                    title={value.type}
+                    type="clear"
+                    containerStyle={{
+                        marginLeft: 10,
+                        backgroundColor: "#00a8ff",
+                        borderRadius: 25,
+                        paddingHorizontal: 25
                     }}
                     titleStyle={{
                         color: "white"
                     }}
-                    onPress={() => btType(index)}
-                    />
-                } else {
-                    return <Button
+                    onPress={() => setActiveType(value)}
+                />
+            } else {
+                return <Button
                     title={value.type}
                     type="clear"
                     containerStyle={{
@@ -40,23 +50,60 @@ const DetailProduk = (props) => {
                         borderWidth: 1,
                         borderColor: "grey"
                     }}
-                    onPress={() => btType(index)}
-                    />
-                }
-            })
-        }
-        
-        const toggleOverlay = () => { 
-            setVisible(!visible); 
-        };
+                    onPress={() => setActiveType(value)}
+                />
+            }
+        })
+    }
 
-        const btType = (index) => {
-            setActiveType(index)
-            setQty(stock[index].qty)
+    const toggleOverlay = () => {
+        setVisible(!visible);
+    };
+
+    const toggleAddToCart = () => {
+        if (activeType.type) {
+            toggleOverlay()
+
+        } else {
+            Alert.alert("Attention ⚠", "Choose Produk Type First")
         }
-        
-        return (
-            <View style={{ paddingTop: hp(10), flex: 1 }}>
+    }
+
+    const onBtAddToCart = async () => {
+        //  1. Line 17 -> Mengambil data cart sebelumnya
+        //     Line 72 -> Menyimpan kedalam temp
+        let temp = [...cart]
+        //  2. Menambahkan data cart yang baru kedalam data cart sebelumnya
+        temp.push({
+            image: images[0],
+            nama,
+            brand,
+            harga,
+            type: activeType.type,
+            qty: parseInt(qty)
+        })
+        //  3. Mengirim data cart yang telah diperbarui ke dalam json-server/api
+        if (parseInt(qty) > 0 && iduser) {
+            let res = await dispatch(updateUserCart(temp, iduser))
+
+            if (res.success) {
+                Alert.alert("Success ✅", "Check Your Cart",
+                    [
+                        {
+                            text: "OK",
+                            onPress: toggleOverlay
+                        }
+                    ])
+            } else {
+                Alert.alert("Attention ⚠️", "Add to cart failed");
+            }
+        } else {
+            Alert.alert("Attention ⚠️", `Minimum 1 qty ${iduser}`);
+        }
+    }
+
+    return (
+        <View style={{ paddingTop: hp(10), flex: 1 }}>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{ display: "flex" }}>
                     <Icon
@@ -122,10 +169,10 @@ const DetailProduk = (props) => {
                 titleStyle={{
                     color: "black"
                 }}
-                onPress={toggleOverlay}
+                onPress={toggleAddToCart}
             />
             <Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
-                <Input containerStyle={{ width: wp(80) }} />
+                <Input containerStyle={{ width: wp(80) }} value={qty} onChangeText={value => setQty(parseInt(value))} />
                 <View style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <Icon
                         name='plus'
@@ -134,7 +181,7 @@ const DetailProduk = (props) => {
                         size={15}
                         style={{ marginTop: 3 }}
                     />
-                    <Text style={{ color: "#f1c40f", fontWeight: "800" }}> Submit</Text>
+                    <Text style={{ color: "#f1c40f", fontWeight: "800" }} onPress={onBtAddToCart}> Submit</Text>
                 </View>
             </Overlay>
         </View >
