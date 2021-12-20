@@ -1,5 +1,6 @@
 import AsyncStorageLib from "@react-native-async-storage/async-storage"
 import axios from "axios"
+
 import { API_URL } from "../../helper"
 
 export const onLogin = (username, password) => {
@@ -12,7 +13,7 @@ export const onLogin = (username, password) => {
                     type: "LOGIN_SUCCESS",
                     payload: res.data[0]
                 })
-                AsyncStorageLib.setItem("dataUser", data)
+                await AsyncStorageLib.setItem("dataUser", JSON.stringify(res.data[0]))
                 return { success: true }
             }
         } catch (error) {
