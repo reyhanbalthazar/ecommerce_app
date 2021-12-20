@@ -21,6 +21,13 @@ export const onLogin = (username, password) => {
     }
 }
 
+export const onLogout = () => {
+    return async (dispatch) => {
+        await AsyncStorageLib.removeItem("dataUser")
+        dispatch({ type: "LOGOUT" })
+    }
+}
+
 export const onKeepLogin = () => {
     return async (dispatch) => {
         try {
@@ -35,7 +42,7 @@ export const onKeepLogin = () => {
                         type: "LOGIN_SUCCESS",
                         payload: res.data[0]
                     })
-                    AsyncStorageLib.setItem("dataUser", JSON.stringify(res.data[0]))
+                    await AsyncStorageLib.setItem("dataUser", JSON.stringify(res.data[0]))
                     return { success: true }
                 }
             }
