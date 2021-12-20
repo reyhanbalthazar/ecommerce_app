@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios"
 import { API_URL } from '../../helper';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text, Image, Card, Badge } from 'react-native-elements';
 import { useSelector } from 'react-redux';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -70,7 +70,7 @@ const HistoryPage = (props) => {
                             <View>
                                 <Badge value={value.status} textStyle={{ fontWeight: "bold" }}
                                     status={
-                                        value.status.includes("Konfirkasi") ?
+                                        value.status.includes("Konfirmasi") ?
                                             "warning" : value.status.includes("Batal") ?
                                                 "error" : "success"
                                     }
@@ -80,15 +80,15 @@ const HistoryPage = (props) => {
                         <Text style={{ color: "white", marginLeft: 15 }}>{value.date}</Text>
                     </View>
                     <View style={{ flexDirection: "row", marginTop: 20 }}>
-                        <Image source={{ uri: value.detail[index].image }} style={{ height: hp(15), width: hp(15), marginBottom: 10 }} />
+                        <Image source={{ uri: value.detail[0].image }} style={{ height: hp(15), width: hp(15), marginBottom: 10 }} />
                         <View style={{ marginLeft: 15 }}>
-                            <Text style={{ fontWeight: "bold" }}>{value.detail[index].nama}</Text>
-                            <Text>{value.detail[index].qty} x Rp. {value.detail[index].harga}</Text>
+                            <Text style={{ fontWeight: "bold" }}>{value.detail[0].nama}</Text>
+                            <Text>{value.detail[0].qty} x Rp. {value.detail[0].harga}</Text>
                             <Text>+{value.detail.length - 1} Produk Lainnya</Text>
                         </View>
                         <View style={{ marginLeft: 30 }}>
                             <Text>Total</Text>
-                            <Text style={{ fontWeight: "bold" }}>Rp. {value.detail[index].totalHarga}</Text>
+                            <Text style={{ fontWeight: "bold" }}>Rp. {value.detail[0].totalHarga}</Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingVertical: hp(1) }}>
@@ -109,9 +109,12 @@ const HistoryPage = (props) => {
             <View style={{ flexDirection: "row" }}>
                 {printButtonFilter()}
             </View>
-            <View>
-                {printCard()}
-            </View>
+            <ScrollView>
+
+                <View>
+                    {printCard()}
+                </View>
+            </ScrollView>
         </View>
     )
 }

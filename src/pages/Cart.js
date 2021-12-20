@@ -80,7 +80,7 @@ const CartPage = (props) => {
             note: "",
             totalPayment: printTotal() + printShipping() + printTax(),
             ongkir: printShipping(),
-            detail: [cart],
+            detail: [...cart],
             status: "Menunggu Konfirmasi"
         }).then((res) => {
             dispatch(updateUserCart([], iduser))
