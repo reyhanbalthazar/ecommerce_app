@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from "axios"
 import { API_URL } from '../../helper';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Image, Card, Badge } from 'react-native-elements';
+import { Text, Image, Card, Badge, Button } from 'react-native-elements';
 import { useSelector } from 'react-redux';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
@@ -54,6 +54,7 @@ const HistoryPage = (props) => {
 
     const printCard = () => {
         return transaksi.map((value, index) => {
+            let badgeColor = value.status.includes("Batal") ? "error" : value.status.includes("Terima") ? "success" : "warning"
             return (
                 <View key={index.toString()} style={{
                     marginBottom: 20,
@@ -92,12 +93,21 @@ const HistoryPage = (props) => {
                         </View>
                     </View>
                     <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingVertical: hp(1) }}>
-                        <Text style={{ backgroundColor: "red", padding: 5, color: "white", borderRadius: 7 }}>
-                            Batalkan Pesanan
-                        </Text>
-                        <Text style={{ padding: 5, backgroundColor: "gray", borderRadius: 5, marginHorizontal: wp(2) }}>
-                            Lihat Detail Produk
-                        </Text>
+                        <Button
+                            title="Lihat Detail"
+                            type='outline'
+                            buttonStyle={{ padding: 3 }}
+                            titleStyle={{ fontSize: 10 }}
+                            containerStyle={{ margin: 5 }}
+                            onPress={() => props.navigation.navigate("Detail Transaction", { detail: value })}
+                        />
+                        <Button
+                            title="Batalkan Pesanan"
+                            disabled={badgeColor == "error" ? false : true}
+                            buttonStyle={{ padding: 3, backgroundColor: "red" }}
+                            titleStyle={{ fontSize: 10 }}
+                            containerStyle={{ margin: 5 }}
+                        />
                     </View>
                 </View>
             )

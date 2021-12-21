@@ -10,13 +10,14 @@ import { onLogout } from '../actions';
 const ProfilePage = (props) => {
 
     const dispatch = useDispatch();
-    
-    const { iduser, username, email, status } = useSelector((state) => {
+
+    const { iduser, username, email, status, photo } = useSelector((state) => {
         return {
             iduser: state.userReducer.id,
             username: state.userReducer.username,
             email: state.userReducer.email,
             status: state.userReducer.status,
+            photo: state.userReducer.photo
         }
     })
 
@@ -53,7 +54,7 @@ const ProfilePage = (props) => {
         {
             title: "Transactions",
             icon: "cart",
-            press: () => { props.navigation.navigate("History")}
+            press: () => { props.navigation.navigate("History") }
         },
         {
             title: "My Promo",
@@ -102,7 +103,13 @@ const ProfilePage = (props) => {
     const printListMenuAccount = () => {
         return menuAccount.map((value, index) => {
             return <ListItem key={index.toString()} onPress={value.press}>
-                <Icon name={value.icon} size={25} type="material-community" color="#1b1464" />
+                <Icon
+                    name={value.icon}
+                    size={25}
+                    type="material-community"
+                    color="#1b1464"
+                    
+                />
                 <ListItem.Content>
                     <ListItem.Title>{value.title}</ListItem.Title>
                 </ListItem.Content>
@@ -145,6 +152,7 @@ const ProfilePage = (props) => {
                         type="material-community"
                         name="account-edit"
                         color="white"
+                        onPress={()=> props.navigation.navigate("Detail Account")}
                     />
                 </View>
                 <View style={{ flexDirection: "row", marginTop: hp(5) }}>

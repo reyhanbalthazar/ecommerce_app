@@ -62,6 +62,7 @@ export const onRegister = (username, email, password) => {
                 password: password,
                 role: "user",
                 status: "Active",
+                photo: "https://w7.pngwing.com/pngs/980/886/png-transparent-male-portrait-avatar-computer-icons-icon-design-avatar-flat-face-icon-people-head-cartoon-thumbnail.png",
                 cart: []
             })
             dispatch({
@@ -92,6 +93,26 @@ export const updateUserCart = (data, iduser) => {
             return { success: true }
         } catch (error) {
             console.type(error)
+        }
+    }
+}
+
+export const updateUserPhoto = (image, iduser) => {
+    return async (dispatch) => {
+        try {
+            let res = await axios.patch(`${API_URL}/dataUser/${iduser}`, {
+                photo: image
+            })
+
+            dispatch({
+                type: "UPDATE_PHOTO",
+                payload: res.data.photo
+            })
+
+            return { success: true }
+
+        } catch (error) {
+            console.log(error)
         }
     }
 }
