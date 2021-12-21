@@ -31,7 +31,6 @@ const ProfilePage = (props) => {
         }
     })
 
-
     const [saldo, setSaldo] = useState([
         {
             nameIcon: "credit-card",
@@ -141,7 +140,7 @@ const ProfilePage = (props) => {
                     <Avatar
                         rounded
                         size="large"
-                        source={{ uri: "https://i.pinimg.com/474x/4b/71/f8/4b71f8137985eaa992d17a315997791e.jpg" }}
+                        source={{ uri: photo }}
                     />
                     <View style={{ marginLeft: wp(5) }}>
                         <Text style={{ color: "yellow" }} h4>{username} <Badge value={status} status="success" /></Text>

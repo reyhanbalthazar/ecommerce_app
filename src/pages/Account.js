@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
-import { Avatar, Icon, ListItem, Overlay, Text } from 'react-native-elements';
+import { Alert, KeyboardAvoidingView, ScrollView, View } from 'react-native';
+import { Avatar, Icon, ListItem, Overlay, Text, Input, Button } from 'react-native-elements';
 import { useDispatch, useSelector } from 'react-redux';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import ImageCropPicker from 'react-native-image-crop-picker';
-import {updateUserPhoto} from "../actions"
+import { updateUserData, updateUserPhoto } from "../actions"
 
 const Account = (props) => {
 
     const dispatch = useDispatch()
-    // const [gambar, setGambar] = useState("https://i.pinimg.com/474x/4b/71/f8/4b71f8137985eaa992d17a315997791e.jpg")
+
     const [visible, setVisible] = useState(false)
+    const [editable, setEditable] = useState(true)
 
     const { iduser, username, email, password, role, status, photo } = useSelector((state) => {
         return {
@@ -24,14 +25,28 @@ const Account = (props) => {
         }
     })
 
-    const onBtImage = async () => {
+    const [newUsername, setNewUsername] = useState(username)
+    const [newEmail, setNewEmail] = useState(email)
+    const [newPassword, setNewPassword] = useState(password)
+
+    const onBtImage = async (type) => {
         try {
-            let image = await ImageCropPicker.openPicker({
-                width: wp(40),
-                height: wp(40),
-                cropping: true,
-                mediaType: 'photo'
-            })
+            let image
+            if (type == "gallery") {
+                image = await ImageCropPicker.openPicker({
+                    width: wp(40),
+                    height: wp(40),
+                    cropping: true,
+                    mediaType: 'photo'
+                })
+            } else if (type == "camera") {
+                image = await ImageCropPicker.openCamera({
+                    width: wp(40),
+                    height: wp(40),
+                    cropping: true,
+                    mediaType: 'photo'
+                })
+            }
 
             if (image.path) {
                 let res = await dispatch(updateUserPhoto(image.path, iduser))
@@ -44,39 +59,94 @@ const Account = (props) => {
         }
     }
 
+    const onBtEditable = () => {
+        setEditable(!editable)
+        // if (editable == true) {
+        //     setEditable(false)
+        // } else if (editable == false) {
+        //     setEditable(true)
+        // }
+    }
+
+    const onBtSave = async () => {
+        try {
+            let res = await dispatch(updateUserData(newUsername, newEmail, newPassword, iduser))
+            Alert.alert("Ubah Berhasil ✅")
+            console.log("onBtSave", res.success)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <View style={{ flex: 1, backgroundColor: "white" }}>
-            <Overlay isVisible={visible} onBackdropPress={() => setVisible(!visible)}>
-                <ListItem containerStyle={{ width: wp(65) }} onPress={onBtImage}>
-                    <Icon name="folder" type="feather" />
-                    <ListItem.Content>
-                        <ListItem.Title>Select From Gallery</ListItem.Title>
-                    </ListItem.Content>
-                    <ListItem.Chevron />
-                </ListItem>
-                <ListItem containerStyle={{ width: wp(65) }}>
-                    <Icon name="camera" type="feather" />
-                    <ListItem.Content>
-                        <ListItem.Title>Open Camera</ListItem.Title>
-                    </ListItem.Content>
-                    <ListItem.Chevron />
-                </ListItem>
-
-            </Overlay>
-            <Avatar
-                containerStyle={{ alignSelf: "center", marginTop: 16 }}
-                rounded
-                size="xlarge"
-                source={{ uri: photo }}
-            >
-                <Avatar.Accessory
-                    name="edit"
-                    type="feather"
-                    size={40}
-                    iconStyle={{ fontSize: 20 }}
-                    onPress={() => setVisible(!visible)}
-                />
-            </Avatar>
+            <ScrollView>
+                <KeyboardAvoidingView behavior="position">
+                    <Overlay isVisible={visible} onBackdropPress={() => setVisible(!visible)}>
+                        <ListItem containerStyle={{ width: wp(65) }} onPress={() => onBtImage("gallery")}>
+                            <Icon name="folder" type="feather" />
+                            <ListItem.Content>
+                                <ListItem.Title>Select From Gallery</ListItem.Title>
+                            </ListItem.Content>
+                            <ListItem.Chevron />
+                        </ListItem>
+                        <ListItem containerStyle={{ width: wp(65) }} onPress={() => onBtImage("camera")}>
+                            <Icon name="camera" type="feather" />
+                            <ListItem.Content>
+                                <ListItem.Title>Open Camera</ListItem.Title>
+                            </ListItem.Content>
+                            <ListItem.Chevron />
+                        </ListItem>
+                    </Overlay>
+                    <Avatar
+                        containerStyle={{ alignSelf: "center", marginTop: 16 }}
+                        rounded
+                        size="xlarge"
+                        source={{ uri: photo }}
+                    >
+                        <Avatar.Accessory
+                            name="edit"
+                            type="feather"
+                            size={40}
+                            iconStyle={{ fontSize: 20 }}
+                            onPress={() => setVisible(!visible)}
+                        />
+                    </Avatar>
+                    <View style={{ paddingHorizontal: 20, marginTop: hp(10) }}>
+                        <Input
+                            defaultValue={editable ? username : newUsername}
+                            onChangeText={(val) => setNewUsername(val)}
+                            disabled={editable}
+                        />
+                        <Input
+                            defaultValue={editable ? email : newEmail}
+                            onChangeText={(val) => setNewEmail(val)}
+                            disabled={editable}
+                        />
+                        <Input
+                            defaultValue={editable ? password : newPassword}
+                            secureTextEntry={true}
+                            onChangeText={(val) => setNewPassword(val)}
+                            disabled={editable}
+                        />
+                        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                            <Button
+                                title={editable ? "Edit" : "Cancel"}
+                                containerStyle={{ borderRadius: 10, width: 150 }}
+                                buttonStyle={{ backgroundColor: "#00a8ff" }}
+                                onPress={onBtEditable}
+                            />
+                            <Button
+                                title="Save"
+                                containerStyle={{ borderRadius: 10, width: 150 }}
+                                buttonStyle={{ backgroundColor: "#00a8ff" }}
+                                onPress={onBtSave}
+                                disabled={editable}
+                            />
+                        </View>
+                    </View>
+                </KeyboardAvoidingView>
+            </ScrollView>
         </View>
     )
 }
