@@ -117,13 +117,11 @@ export const updateUserPhoto = (image, iduser) => {
     }
 }
 
-export const updateUserData = (username, email, password, iduser) => {
+export const updateUserData = (data, iduser) => {
     return async (dispatch) => {
         try {
             let res = await axios.patch(`${API_URL}/dataUser/${iduser}`, {
-                username,
-                email,
-                password
+                ...data
             })
             dispatch({
                 type: "UPDATE_USER",

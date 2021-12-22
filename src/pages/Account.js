@@ -25,9 +25,11 @@ const Account = (props) => {
         }
     })
 
-    const [newUsername, setNewUsername] = useState(username)
-    const [newEmail, setNewEmail] = useState(email)
-    const [newPassword, setNewPassword] = useState(password)
+    const [data, setData] = useState({
+        username,
+        email,
+        password
+    })
 
     const onBtImage = async (type) => {
         try {
@@ -61,16 +63,14 @@ const Account = (props) => {
 
     const onBtEditable = () => {
         setEditable(!editable)
-        // if (editable == true) {
-        //     setEditable(false)
-        // } else if (editable == false) {
-        //     setEditable(true)
-        // }
+        setData({
+            ...data, username, email, password
+        })
     }
 
     const onBtSave = async () => {
         try {
-            let res = await dispatch(updateUserData(newUsername, newEmail, newPassword, iduser))
+            let res = await dispatch(updateUserData(data, iduser))
             Alert.alert("Ubah Berhasil ✅")
             console.log("onBtSave", res.success)
         } catch (error) {
@@ -114,19 +114,22 @@ const Account = (props) => {
                     </Avatar>
                     <View style={{ paddingHorizontal: 20, marginTop: hp(10) }}>
                         <Input
-                            defaultValue={editable ? username : newUsername}
-                            onChangeText={(val) => setNewUsername(val)}
+                            label="Username"
+                            value={data.username}
+                            onChangeText={(val) => setData({ ...data, username: val })}
                             disabled={editable}
                         />
                         <Input
-                            defaultValue={editable ? email : newEmail}
-                            onChangeText={(val) => setNewEmail(val)}
+                            label="Email"
+                            defaultValue={data.email}
+                            onChangeText={(val) => setData({ ...data, email: val })}
                             disabled={editable}
                         />
                         <Input
-                            defaultValue={editable ? password : newPassword}
+                            label="Password"
+                            defaultValue={data.password}
                             secureTextEntry={true}
-                            onChangeText={(val) => setNewPassword(val)}
+                            onChangeText={(val) => setData({ ...data, password: val })}
                             disabled={editable}
                         />
                         <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
